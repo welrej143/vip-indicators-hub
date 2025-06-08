@@ -176,27 +176,27 @@
         <div class="stats-grid">
             <div class="stat-card">
                 <h3>Total Page Views</h3>
-                <div class="stat-number" id="totalViews">-</div>
+                <div class="stat-number" id="totalViews">Loading...</div>
                 <div class="stat-label">Unique Visits</div>
             </div>
             <div class="stat-card">
                 <h3>Button Clicks</h3>
-                <div class="stat-number" id="totalClicks">-</div>
+                <div class="stat-number" id="totalClicks">Loading...</div>
                 <div class="stat-label">User Interactions</div>
             </div>
             <div class="stat-card">
                 <h3>Leads Generated</h3>
-                <div class="stat-number" id="totalLeads">-</div>
+                <div class="stat-number" id="totalLeads">Loading...</div>
                 <div class="stat-label">Email Captures</div>
             </div>
             <div class="stat-card">
                 <h3>Conversions</h3>
-                <div class="stat-number" id="totalConversions">-</div>
+                <div class="stat-number" id="totalConversions">Loading...</div>
                 <div class="stat-label">ClickBank Clicks</div>
             </div>
             <div class="stat-card">
                 <h3>Conversion Rate</h3>
-                <div class="stat-number" id="conversionRate">-</div>
+                <div class="stat-number" id="conversionRate">Loading...</div>
                 <div class="stat-label">Click to Convert</div>
             </div>
         </div>
@@ -244,47 +244,52 @@
                 const data = await response.json();
                 console.log('Stats data received:', data);
                 
-                // Force update with detailed logging
-                const totalViewsEl = document.getElementById('totalViews');
-                const totalClicksEl = document.getElementById('totalClicks');
-                const totalLeadsEl = document.getElementById('totalLeads');
-                const totalConversionsEl = document.getElementById('totalConversions');
-                const conversionRateEl = document.getElementById('conversionRate');
-                
-                console.log('Elements found:', {
-                    totalViews: !!totalViewsEl,
-                    totalClicks: !!totalClicksEl,
-                    totalLeads: !!totalLeadsEl,
-                    totalConversions: !!totalConversionsEl,
-                    conversionRate: !!conversionRateEl
-                });
-                
-                if (totalViewsEl) {
-                    totalViewsEl.textContent = data.totalViews || 0;
-                    console.log('Updated totalViews to:', data.totalViews);
-                }
-                if (totalClicksEl) {
-                    totalClicksEl.textContent = data.totalClicks || 0;
-                    console.log('Updated totalClicks to:', data.totalClicks);
-                }
-                if (totalLeadsEl) {
-                    totalLeadsEl.textContent = data.totalLeads || 0;
-                    console.log('Updated totalLeads to:', data.totalLeads);
-                }
-                if (totalConversionsEl) {
-                    totalConversionsEl.textContent = data.totalConversions || 0;
-                    console.log('Updated totalConversions to:', data.totalConversions);
-                }
-                if (conversionRateEl) {
-                    conversionRateEl.textContent = (data.conversionRate || 0) + '%';
-                    console.log('Updated conversionRate to:', data.conversionRate + '%');
+                // Completely rebuild the stats grid with fresh HTML
+                const statsGrid = document.querySelector('.stats-grid');
+                if (statsGrid) {
+                    statsGrid.innerHTML = `
+                        <div class="stat-card">
+                            <h3>Total Page Views</h3>
+                            <div class="stat-number">${data.totalViews || 0}</div>
+                            <div class="stat-label">Unique Visits</div>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Button Clicks</h3>
+                            <div class="stat-number">${data.totalClicks || 0}</div>
+                            <div class="stat-label">User Interactions</div>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Leads Generated</h3>
+                            <div class="stat-number">${data.totalLeads || 0}</div>
+                            <div class="stat-label">Email Captures</div>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Conversions</h3>
+                            <div class="stat-number">${data.totalConversions || 0}</div>
+                            <div class="stat-label">ClickBank Clicks</div>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Conversion Rate</h3>
+                            <div class="stat-number">${data.conversionRate || 0}%</div>
+                            <div class="stat-label">Click to Convert</div>
+                        </div>
+                    `;
+                    console.log('Stats grid rebuilt with data:', data);
+                } else {
+                    console.error('Stats grid not found');
                 }
             } catch (error) {
                 console.error('Error loading stats:', error);
-                ['totalViews', 'totalClicks', 'totalLeads', 'totalConversions', 'conversionRate'].forEach(id => {
-                    const element = document.getElementById(id);
-                    if (element) element.textContent = 'Error';
-                });
+                const statsGrid = document.querySelector('.stats-grid');
+                if (statsGrid) {
+                    statsGrid.innerHTML = `
+                        <div class="stat-card">
+                            <h3>Error</h3>
+                            <div class="stat-number">-</div>
+                            <div class="stat-label">Unable to load data</div>
+                        </div>
+                    `;
+                }
             }
         }
 
