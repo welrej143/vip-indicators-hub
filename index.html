@@ -829,10 +829,84 @@
     </footer>
 
     <script>
-        // Simple countdown timer for urgency
+        // Generate unique session ID
+        const sessionId = 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        let pageStartTime = Date.now();
+        let maxScrollDepth = 0;
+
+        // Track page view
+        function trackPageView() {
+            fetch('/api/track/pageview', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    sessionId,
+                    pageUrl: window.location.href,
+                    title: document.title,
+                })
+            }).catch(err => console.log('Analytics tracking unavailable'));
+        }
+
+        // Track button clicks
+        function trackClick(buttonText, buttonLocation, destinationUrl) {
+            fetch('/api/track/click', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    sessionId,
+                    buttonText,
+                    buttonLocation,
+                    destinationUrl,
+                })
+            }).catch(err => console.log('Analytics tracking unavailable'));
+        }
+
+        // Track conversion when user clicks ClickBank link
+        function trackConversion(source) {
+            fetch('/api/track/conversion', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    sessionId,
+                    conversionType: 'clickbank_click',
+                    value: 'vip_indicators',
+                    source,
+                })
+            }).catch(err => console.log('Analytics tracking unavailable'));
+        }
+
+        // Track scroll depth
+        function trackScrollDepth() {
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            const windowHeight = window.innerHeight;
+            const documentHeight = document.documentElement.scrollHeight;
+            const scrollPercent = Math.round((scrollTop + windowHeight) / documentHeight * 100);
+            
+            if (scrollPercent > maxScrollDepth) {
+                maxScrollDepth = Math.min(scrollPercent, 100);
+            }
+        }
+
+        // Track time on page before leaving
+        function trackTimeOnPage() {
+            const timeOnPage = Math.round((Date.now() - pageStartTime) / 1000);
+            fetch('/api/track/pageview', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    sessionId,
+                    pageUrl: window.location.href,
+                    title: document.title,
+                    timeOnPage,
+                    scrollDepth: maxScrollDepth,
+                })
+            }).catch(err => console.log('Analytics tracking unavailable'));
+        }
+
+        // Countdown timer for urgency
         function updateTimer() {
             const now = new Date().getTime();
-            const endTime = now + (24 * 60 * 60 * 1000); // 24 hours from now
+            const endTime = now + (24 * 60 * 60 * 1000);
             
             const timer = setInterval(function() {
                 const current = new Date().getTime();
@@ -855,22 +929,44 @@
                 }
             }, 1000);
         }
-        
-        // Initialize timer when page loads
-        document.addEventListener('DOMContentLoaded', updateTimer);
-        
-        // Smooth scrolling for any internal links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }
+
+        // Initialize tracking and timer
+        document.addEventListener('DOMContentLoaded', function() {
+            trackPageView();
+            updateTimer();
+            
+            // Track all ClickBank affiliate links
+            document.querySelectorAll('a[href*="clickbank.net"]').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    const buttonText = this.textContent.trim();
+                    const buttonLocation = this.closest('section')?.className || 'unknown';
+                    trackClick(buttonText, buttonLocation, this.href);
+                    trackConversion(buttonLocation);
+                });
             });
+
+            // Smooth scrolling for internal links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+        });
+
+        // Event listeners for tracking
+        window.addEventListener('scroll', trackScrollDepth);
+        window.addEventListener('beforeunload', trackTimeOnPage);
+        document.addEventListener('visibilitychange', function() {
+            if (document.visibilityState === 'hidden') {
+                trackTimeOnPage();
+            }
         });
     </script>
 </body>
