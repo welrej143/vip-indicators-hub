@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VIP Indicators - Analytics Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #0a0a0a;
+            color: #ffffff;
+            line-height: 1.6;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4a0080 0%, #8a2be2 100%);
+            padding: 20px 0;
+            text-align: center;
+            border-bottom: 3px solid #8a2be2;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+            border: 2px solid #8a2be2;
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(138, 43, 226, 0.2);
+        }
+
+        .stat-card h3 {
+            color: #8a2be2;
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #ffffff;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #cccccc;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+        }
+
+        .refresh-btn {
+            background: linear-gradient(135deg, #8a2be2 0%, #4b0082 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-bottom: 30px;
+            transition: all 0.3s ease;
+        }
+
+        .refresh-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(138, 43, 226, 0.4);
+        }
+
+        .data-tables {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 30px;
+        }
+
+        .table-container {
+            background: #1a1a1a;
+            border: 2px solid #8a2be2;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(138, 43, 226, 0.2);
+        }
+
+        .table-container h3 {
+            color: #8a2be2;
+            font-size: 1.4rem;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #333;
+        }
+
+        th {
+            background: #2a2a2a;
+            color: #8a2be2;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+        }
+
+        td {
+            color: #cccccc;
+        }
+
+        tr:hover {
+            background: rgba(138, 43, 226, 0.1);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #8a2be2;
+            font-style: italic;
+        }
+
+        .error {
+            text-align: center;
+            padding: 20px;
+            color: #ff6b6b;
+            background: rgba(255, 107, 107, 0.1);
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+
+        .last-updated {
+            text-align: center;
+            margin-top: 30px;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stat-number {
+                font-size: 2.5rem;
+            }
+            
+            table {
+                font-size: 0.85rem;
+            }
+            
+            th, td {
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>VIP Indicators Analytics Dashboard</h1>
+        <p>Real-time Marketing Analytics</p>
+    </div>
+
+    <div class="container">
+        <button class="refresh-btn" onclick="window.location.reload()">🔄 Refresh Data</button>
+
+        <div id="stats-container">
+            <!-- Stats will be loaded here -->
+        </div>
+
+        <div class="data-tables">
+            <div class="table-container">
+                <h3>Recent Page Views</h3>
+                <div id="pageViewsTable" class="loading">Loading page views...</div>
+            </div>
+
+            <div class="table-container">
+                <h3>Button Clicks</h3>
+                <div id="clicksTable" class="loading">Loading clicks data...</div>
+            </div>
+
+            <div class="table-container">
+                <h3>Lead Captures</h3>
+                <div id="leadsTable" class="loading">Loading leads data...</div>
+            </div>
+
+            <div class="table-container">
+                <h3>Conversions</h3>
+                <div id="conversionsTable" class="loading">Loading conversions data...</div>
+            </div>
+        </div>
+
+        <div class="last-updated" id="lastUpdated"></div>
+    </div>
+
+    <script>
+        const API_BASE = `${window.location.protocol}//${window.location.host}/api`;
+        
+        // Global data storage
+        window.analyticsData = {};
+
+        async function fetchWithRetry(url, options = {}, retries = 3) {
+            for (let i = 0; i < retries; i++) {
+                try {
+                    const response = await fetch(url, {
+                        ...options,
+                        cache: 'no-cache',
+                        headers: {
+                            'Cache-Control': 'no-cache',
+                            'Pragma': 'no-cache',
+                            ...options.headers
+                        }
+                    });
+                    if (response.ok) {
+                        return await response.json();
+                    }
+                    throw new Error(`HTTP ${response.status}`);
+                } catch (error) {
+                    console.warn(`Attempt ${i + 1} failed:`, error);
+                    if (i === retries - 1) throw error;
+                    await new Promise(resolve => setTimeout(resolve, 1000 * (i + 1)));
+                }
+            }
+        }
+
+        async function loadStats() {
+            try {
+                console.log('Fetching stats from:', `${API_BASE}/analytics/stats`);
+                const data = await fetchWithRetry(`${API_BASE}/analytics/stats`);
+                window.analyticsData.stats = data;
+                
+                console.log('Stats data:', data);
+                
+                // Create stats HTML directly
+                const statsHtml = `
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <h3>Total Page Views</h3>
+                            <div class="stat-number">${data.totalViews}</div>
+                            <div class="stat-label">Unique Visits</div>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Button Clicks</h3>
+                            <div class="stat-number">${data.totalClicks}</div>
+                            <div class="stat-label">User Interactions</div>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Leads Generated</h3>
+                            <div class="stat-number">${data.totalLeads}</div>
+                            <div class="stat-label">Email Captures</div>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Conversions</h3>
+                            <div class="stat-number">${data.totalConversions}</div>
+                            <div class="stat-label">ClickBank Clicks</div>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Conversion Rate</h3>
+                            <div class="stat-number">${data.conversionRate}%</div>
+                            <div class="stat-label">Click to Convert</div>
+                        </div>
+                    </div>
+                `;
+                
+                document.getElementById('stats-container').innerHTML = statsHtml;
+                console.log('Stats HTML updated');
+            } catch (error) {
+                console.error('Error loading stats:', error);
+                document.getElementById('stats-container').innerHTML = `
+                    <div class="error">Failed to load analytics data: ${error.message}</div>
+                `;
+            }
+        }
+
+        async function loadPageViews() {
+            try {
+                const data = await fetchWithRetry(`${API_BASE}/analytics/pageviews`);
+                window.analyticsData.pageViews = data;
+                
+                const tableHtml = `
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Time</th>
+                                <th>Page URL</th>
+                                <th>Title</th>
+                                <th>Time on Page</th>
+                                <th>Scroll Depth</th>
+                                <th>IP Address</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${data.map(view => `
+                                <tr>
+                                    <td>${new Date(view.createdAt).toLocaleString()}</td>
+                                    <td>${view.pageUrl || '-'}</td>
+                                    <td>${view.title || '-'}</td>
+                                    <td>${view.timeOnPage ? view.timeOnPage + 's' : '-'}</td>
+                                    <td>${view.scrollDepth ? view.scrollDepth + '%' : '-'}</td>
+                                    <td>${view.ipAddress || '-'}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+                
+                document.getElementById('pageViewsTable').innerHTML = tableHtml;
+            } catch (error) {
+                console.error('Error loading page views:', error);
+                document.getElementById('pageViewsTable').innerHTML = `<div class="error">Error loading page views: ${error.message}</div>`;
+            }
+        }
+
+        async function loadClicks() {
+            try {
+                const data = await fetchWithRetry(`${API_BASE}/analytics/clicks`);
+                window.analyticsData.clicks = data;
+                
+                const tableHtml = `
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Time</th>
+                                <th>Button Text</th>
+                                <th>Location</th>
+                                <th>Destination URL</th>
+                                <th>IP Address</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${data.map(click => `
+                                <tr>
+                                    <td>${new Date(click.createdAt).toLocaleString()}</td>
+                                    <td>${click.buttonText || '-'}</td>
+                                    <td>${click.buttonLocation || '-'}</td>
+                                    <td>${click.destinationUrl || '-'}</td>
+                                    <td>${click.ipAddress || '-'}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+                
+                document.getElementById('clicksTable').innerHTML = tableHtml;
+            } catch (error) {
+                console.error('Error loading clicks:', error);
+                document.getElementById('clicksTable').innerHTML = `<div class="error">Error loading clicks: ${error.message}</div>`;
+            }
+        }
+
+        async function loadLeads() {
+            try {
+                const data = await fetchWithRetry(`${API_BASE}/analytics/leads`);
+                window.analyticsData.leads = data;
+                
+                const tableHtml = `
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Time</th>
+                                <th>Email</th>
+                                <th>Name</th>
+                                <th>Source</th>
+                                <th>IP Address</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${data.map(lead => `
+                                <tr>
+                                    <td>${new Date(lead.createdAt).toLocaleString()}</td>
+                                    <td>${lead.email}</td>
+                                    <td>${lead.name || '-'}</td>
+                                    <td>${lead.source}</td>
+                                    <td>${lead.ipAddress || '-'}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+                
+                document.getElementById('leadsTable').innerHTML = tableHtml;
+            } catch (error) {
+                console.error('Error loading leads:', error);
+                document.getElementById('leadsTable').innerHTML = `<div class="error">Error loading leads: ${error.message}</div>`;
+            }
+        }
+
+        async function loadConversions() {
+            try {
+                const data = await fetchWithRetry(`${API_BASE}/analytics/conversions`);
+                window.analyticsData.conversions = data;
+                
+                const tableHtml = `
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Time</th>
+                                <th>Type</th>
+                                <th>Value</th>
+                                <th>Source</th>
+                                <th>IP Address</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${data.map(conversion => `
+                                <tr>
+                                    <td>${new Date(conversion.createdAt).toLocaleString()}</td>
+                                    <td>${conversion.conversionType}</td>
+                                    <td>${conversion.value}</td>
+                                    <td>${conversion.source}</td>
+                                    <td>${conversion.ipAddress || '-'}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+                
+                document.getElementById('conversionsTable').innerHTML = tableHtml;
+            } catch (error) {
+                console.error('Error loading conversions:', error);
+                document.getElementById('conversionsTable').innerHTML = `<div class="error">Error loading conversions: ${error.message}</div>`;
+            }
+        }
+
+        async function loadAllData() {
+            console.log('Loading all analytics data...');
+            document.getElementById('lastUpdated').textContent = 'Loading data...';
+            
+            try {
+                await Promise.all([
+                    loadStats(),
+                    loadPageViews(),
+                    loadClicks(),
+                    loadLeads(),
+                    loadConversions()
+                ]);
+                
+                document.getElementById('lastUpdated').textContent = `Last updated: ${new Date().toLocaleString()}`;
+                console.log('All data loaded successfully');
+            } catch (error) {
+                console.error('Error loading data:', error);
+                document.getElementById('lastUpdated').textContent = `Error: ${error.message}`;
+            }
+        }
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', loadAllData);
+        
+        // Auto-refresh every 30 seconds
+        setInterval(loadAllData, 30000);
+        
+        // Debug function
+        window.debugAnalytics = () => {
+            console.log('Analytics Data:', window.analyticsData);
+        };
+    </script>
+</body>
+</html>

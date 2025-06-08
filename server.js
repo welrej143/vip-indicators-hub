@@ -46,6 +46,15 @@ app.use((req, res, next) => {
 app.use(express.json());
 app.use(express.static('.'));
 
+// Redirect admin.html to the new dashboard
+app.get('/admin.html', (req, res) => {
+    res.redirect('/admin-dashboard.html');
+});
+
+app.get('/admin', (req, res) => {
+    res.redirect('/admin-dashboard.html');
+});
+
 // Analytics Class
 class Analytics {
   static async trackPageView(data) {
