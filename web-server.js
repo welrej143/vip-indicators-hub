@@ -81,7 +81,7 @@ app.get('/api/analytics/conversions', async (req, res) => {
 app.post('/api/track/pageview', async (req, res) => {
     try {
         const fetch = (await import('node-fetch')).default;
-        const response = await fetch('http://localhost:3001/api/track/pageview', {
+        const response = await fetch('http://127.0.0.1:3001/api/track/pageview', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(req.body)
@@ -97,7 +97,7 @@ app.post('/api/track/pageview', async (req, res) => {
 app.post('/api/track/click', async (req, res) => {
     try {
         const fetch = (await import('node-fetch')).default;
-        const response = await fetch('http://localhost:3001/api/track/click', {
+        const response = await fetch('http://127.0.0.1:3001/api/track/click', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(req.body)
@@ -113,7 +113,7 @@ app.post('/api/track/click', async (req, res) => {
 app.post('/api/track/lead', async (req, res) => {
     try {
         const fetch = (await import('node-fetch')).default;
-        const response = await fetch('http://localhost:3001/api/track/lead', {
+        const response = await fetch('http://127.0.0.1:3001/api/track/lead', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(req.body)
@@ -129,7 +129,7 @@ app.post('/api/track/lead', async (req, res) => {
 app.post('/api/track/conversion', async (req, res) => {
     try {
         const fetch = (await import('node-fetch')).default;
-        const response = await fetch('http://localhost:3001/api/track/conversion', {
+        const response = await fetch('http://127.0.0.1:3001/api/track/conversion', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(req.body)
