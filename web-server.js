@@ -20,24 +20,43 @@ app.use(express.json());
 app.get('/api/analytics/stats', async (req, res) => {
     try {
         const fetch = (await import('node-fetch')).default;
-        const response = await fetch('http://127.0.0.1:3001/api/analytics/stats');
+        const analyticsUrl = process.env.ANALYTICS_API_URL || 'http://127.0.0.1:3001';
+        const response = await fetch(`${analyticsUrl}/api/analytics/stats`);
+        
+        if (!response.ok) {
+            throw new Error(`Analytics API responded with ${response.status}`);
+        }
+        
         const data = await response.json();
         res.json(data);
     } catch (error) {
         console.error('Error fetching stats:', error);
-        res.status(500).json({ error: 'Failed to fetch stats' });
+        // Return empty stats instead of error for better UX
+        res.json({
+            totalViews: 0,
+            totalClicks: 0,
+            totalLeads: 0,
+            totalConversions: 0,
+            conversionRate: '0'
+        });
     }
 });
 
 app.get('/api/analytics/pageviews', async (req, res) => {
     try {
         const fetch = (await import('node-fetch')).default;
-        const response = await fetch('http://127.0.0.1:3001/api/analytics/pageviews');
+        const analyticsUrl = process.env.ANALYTICS_API_URL || 'http://127.0.0.1:3001';
+        const response = await fetch(`${analyticsUrl}/api/analytics/pageviews`);
+        
+        if (!response.ok) {
+            throw new Error(`Analytics API responded with ${response.status}`);
+        }
+        
         const data = await response.json();
         res.json(data);
     } catch (error) {
         console.error('Error fetching pageviews:', error);
-        res.status(500).json({ error: 'Failed to fetch pageviews' });
+        res.json([]);
     }
 });
 

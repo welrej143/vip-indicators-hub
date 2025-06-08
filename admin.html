@@ -227,12 +227,22 @@
     </div>
 
     <script>
-        const API_BASE = `${window.location.protocol}//${window.location.host}/api`;
+        // Dynamic API base URL that works in both preview and deployed environments
+        const API_BASE = window.location.hostname.includes('replit.app') || window.location.hostname.includes('repl.co') 
+            ? `${window.location.protocol}//${window.location.host}/api`
+            : `${window.location.protocol}//${window.location.host}/api`;
 
         async function loadStats() {
             try {
+                console.log('Loading stats from:', `${API_BASE}/analytics/stats`);
                 const response = await fetch(`${API_BASE}/analytics/stats`);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
                 const data = await response.json();
+                console.log('Stats data received:', data);
                 
                 document.getElementById('totalViews').textContent = data.totalViews || 0;
                 document.getElementById('totalClicks').textContent = data.totalClicks || 0;
@@ -242,15 +252,27 @@
             } catch (error) {
                 console.error('Error loading stats:', error);
                 ['totalViews', 'totalClicks', 'totalLeads', 'totalConversions', 'conversionRate'].forEach(id => {
-                    document.getElementById(id).textContent = 'Error';
+                    const element = document.getElementById(id);
+                    if (element) element.textContent = 'Error';
                 });
             }
         }
 
         async function loadPageViews() {
             try {
+                console.log('Loading page views from:', `${API_BASE}/analytics/pageviews`);
                 const response = await fetch(`${API_BASE}/analytics/pageviews`);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
                 const data = await response.json();
+                console.log('Page views data received:', data.length, 'items');
+                
+                if (!Array.isArray(data)) {
+                    throw new Error('Invalid data format received');
+                }
                 
                 const tableHtml = `
                     <table>
@@ -267,12 +289,12 @@
                         <tbody>
                             ${data.map(view => `
                                 <tr>
-                                    <td>${new Date(view.created_at).toLocaleString()}</td>
-                                    <td>${view.page_url}</td>
-                                    <td>${view.title}</td>
-                                    <td>${view.time_on_page ? view.time_on_page + 's' : '-'}</td>
-                                    <td>${view.scroll_depth ? view.scroll_depth + '%' : '-'}</td>
-                                    <td>${view.ip_address || '-'}</td>
+                                    <td>${new Date(view.created_at || view.createdAt).toLocaleString()}</td>
+                                    <td>${view.page_url || view.pageUrl || '-'}</td>
+                                    <td>${view.title || '-'}</td>
+                                    <td>${view.time_on_page || view.timeOnPage ? (view.time_on_page || view.timeOnPage) + 's' : '-'}</td>
+                                    <td>${view.scroll_depth || view.scrollDepth ? (view.scroll_depth || view.scrollDepth) + '%' : '-'}</td>
+                                    <td>${view.ip_address || view.ipAddress || '-'}</td>
                                 </tr>
                             `).join('')}
                         </tbody>
@@ -282,7 +304,7 @@
                 document.getElementById('pageViewsTable').innerHTML = tableHtml;
             } catch (error) {
                 console.error('Error loading page views:', error);
-                document.getElementById('pageViewsTable').innerHTML = '<div class="error">Error loading page views data</div>';
+                document.getElementById('pageViewsTable').innerHTML = `<div class="error">Error loading page views: ${error.message}</div>`;
             }
         }
 
