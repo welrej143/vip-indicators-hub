@@ -558,15 +558,69 @@
             
             <div style="margin: 60px 0;">
                 <div style="background: rgba(0,0,0,0.3); border-radius: 15px; padding: 40px; max-width: 900px; margin: 0 auto;">
-                    <!-- Performance Chart Placeholder -->
+                    <!-- Performance Chart -->
                     <div style="background: #1a1a2e; border-radius: 10px; padding: 30px; margin-bottom: 30px;">
-                        <div style="height: 300px; background: linear-gradient(45deg, #0a5c2e 0%, #00ff88 100%); border-radius: 10px; position: relative; overflow: hidden;">
+                        <div style="height: 350px; background: #0f1419; border-radius: 10px; position: relative; overflow: hidden; border: 1px solid #333;">
+                            <!-- Chart Grid Lines -->
+                            <svg width="100%" height="100%" style="position: absolute; top: 0; left: 0;">
+                                <!-- Horizontal grid lines -->
+                                <line x1="0" y1="25%" x2="100%" y2="25%" stroke="#333" stroke-width="1" opacity="0.3"/>
+                                <line x1="0" y1="50%" x2="100%" y2="50%" stroke="#333" stroke-width="1" opacity="0.3"/>
+                                <line x1="0" y1="75%" x2="100%" y2="75%" stroke="#333" stroke-width="1" opacity="0.3"/>
+                                
+                                <!-- Vertical grid lines -->
+                                <line x1="20%" y1="0" x2="20%" y2="100%" stroke="#333" stroke-width="1" opacity="0.3"/>
+                                <line x1="40%" y1="0" x2="40%" y2="100%" stroke="#333" stroke-width="1" opacity="0.3"/>
+                                <line x1="60%" y1="0" x2="60%" y2="100%" stroke="#333" stroke-width="1" opacity="0.3"/>
+                                <line x1="80%" y1="0" x2="80%" y2="100%" stroke="#333" stroke-width="1" opacity="0.3"/>
+                                
+                                <!-- Profit curve -->
+                                <path d="M 0 90 Q 100 85 200 75 T 400 60 T 600 40 T 800 25 L 800 100 L 0 100 Z" 
+                                      fill="url(#profitGradient)" opacity="0.8"/>
+                                <path d="M 0 90 Q 100 85 200 75 T 400 60 T 600 40 T 800 25" 
+                                      fill="none" stroke="#00ff88" stroke-width="3"/>
+                                
+                                <!-- Gradient definition -->
+                                <defs>
+                                    <linearGradient id="profitGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                                        <stop offset="0%" stop-color="#00ff88" stop-opacity="0.6"/>
+                                        <stop offset="100%" stop-color="#00ff88" stop-opacity="0.1"/>
+                                    </linearGradient>
+                                </defs>
+                            </svg>
+                            
+                            <!-- Y-axis labels -->
+                            <div style="position: absolute; left: 10px; top: 10px; color: #888; font-size: 12px;">50000.00</div>
+                            <div style="position: absolute; left: 10px; top: 30%; color: #888; font-size: 12px;">40000.00</div>
+                            <div style="position: absolute; left: 10px; top: 50%; color: #888; font-size: 12px;">30000.00</div>
+                            <div style="position: absolute; left: 10px; top: 70%; color: #888; font-size: 12px;">20000.00</div>
+                            <div style="position: absolute; left: 10px; bottom: 30px; color: #888; font-size: 12px;">10000.00</div>
+                            
+                            <!-- X-axis labels -->
+                            <div style="position: absolute; bottom: 10px; left: 15%; color: #888; font-size: 12px;">2</div>
+                            <div style="position: absolute; bottom: 10px; left: 35%; color: #888; font-size: 12px;">4</div>
+                            <div style="position: absolute; bottom: 10px; left: 55%; color: #888; font-size: 12px;">6</div>
+                            <div style="position: absolute; bottom: 10px; left: 75%; color: #888; font-size: 12px;">8</div>
+                            <div style="position: absolute; bottom: 10px; right: 15%; color: #888; font-size: 12px;">10</div>
+                            
+                            <!-- Legend -->
                             <div style="position: absolute; bottom: 20px; left: 20px; color: white;">
-                                <p style="font-size: 14px; opacity: 0.8;">Equity $</p>
-                                <p style="font-size: 12px; opacity: 0.6;">Drawdown $</p>
+                                <div style="display: flex; align-items: center; margin-bottom: 5px;">
+                                    <div style="width: 12px; height: 3px; background: #00ff88; margin-right: 8px;"></div>
+                                    <span style="font-size: 14px; opacity: 0.8;">Equity $</span>
+                                </div>
+                                <div style="display: flex; align-items: center;">
+                                    <div style="width: 12px; height: 3px; background: #4a9eff; margin-right: 8px;"></div>
+                                    <span style="font-size: 12px; opacity: 0.6;">Drawdown $</span>
+                                </div>
                             </div>
+                            
+                            <!-- Strategy info -->
                             <div style="position: absolute; bottom: 20px; right: 20px; color: white;">
-                                <p style="font-size: 14px; opacity: 0.8;">Buy & hold strategy</p>
+                                <div style="background: rgba(0,0,0,0.5); padding: 8px 12px; border-radius: 5px;">
+                                    <div style="font-size: 14px; opacity: 0.8; margin-bottom: 5px;">📈 Absolute</div>
+                                    <div style="font-size: 12px; opacity: 0.6;">📊 Percentage</div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -640,14 +694,55 @@
                 <!-- VIP Trading Course -->
                 <div style="background: rgba(0,0,0,0.3); border-radius: 15px; padding: 40px;">
                     <h4 style="color: #00ff88; font-size: 1.5rem; margin-bottom: 20px;">The VIP Trading Course™</h4>
-                    <div style="background: #000; border-radius: 10px; padding: 20px; margin: 20px 0;">
-                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;">
-                            <div style="background: #4a9eff; border-radius: 5px; padding: 20px; color: white; font-size: 12px; text-align: center;">LESSON 7<br>Advanced</div>
-                            <div style="background: #333; border-radius: 5px; padding: 20px; text-align: center; display: flex; align-items: center; justify-content: center;">
-                                <div style="color: white; font-size: 10px;">Screen with trading interface</div>
+                    <div style="background: #000; border-radius: 10px; padding: 30px; margin: 20px 0; position: relative;">
+                        <!-- Course modules grid -->
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 20px;">
+                            <div style="background: linear-gradient(135deg, #4a9eff 0%, #357abd 100%); border-radius: 8px; padding: 25px; color: white; text-align: center; box-shadow: 0 4px 15px rgba(74, 158, 255, 0.3);">
+                                <div style="font-size: 11px; opacity: 0.8; margin-bottom: 5px;">LESSON 7</div>
+                                <div style="font-size: 13px; font-weight: bold;">Advanced</div>
+                                <div style="font-size: 10px; margin-top: 8px; opacity: 0.7;">Strategies</div>
                             </div>
-                            <div style="background: #ff6b6b; border-radius: 5px; padding: 20px; color: white; font-size: 12px; text-align: center;">SECRETS<br>TO<br>TRADING</div>
+                            
+                            <div style="background: #1a1a2e; border: 2px solid #333; border-radius: 8px; padding: 20px; text-align: center; position: relative; overflow: hidden;">
+                                <!-- Mock trading interface -->
+                                <div style="background: #0f1419; border-radius: 4px; height: 80px; position: relative;">
+                                    <!-- Candlestick chart simulation -->
+                                    <svg width="100%" height="100%" style="position: absolute;">
+                                        <rect x="10%" y="30%" width="3%" height="40%" fill="#00ff88"/>
+                                        <rect x="20%" y="20%" width="3%" height="50%" fill="#ff4444"/>
+                                        <rect x="30%" y="40%" width="3%" height="30%" fill="#00ff88"/>
+                                        <rect x="40%" y="25%" width="3%" height="45%" fill="#00ff88"/>
+                                        <rect x="50%" y="35%" width="3%" height="35%" fill="#ff4444"/>
+                                        <rect x="60%" y="15%" width="3%" height="55%" fill="#00ff88"/>
+                                        <rect x="70%" y="45%" width="3%" height="25%" fill="#ff4444"/>
+                                        <rect x="80%" y="30%" width="3%" height="40%" fill="#00ff88"/>
+                                    </svg>
+                                </div>
+                                <div style="color: #ccc; font-size: 9px; margin-top: 8px;">Live Interface</div>
+                            </div>
+                            
+                            <div style="background: linear-gradient(135deg, #ff6b6b 0%, #cc5555 100%); border-radius: 8px; padding: 25px; color: white; text-align: center; box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);">
+                                <div style="font-size: 10px; font-weight: bold; line-height: 1.2;">SECRETS</div>
+                                <div style="font-size: 10px; font-weight: bold; line-height: 1.2;">TO</div>
+                                <div style="font-size: 10px; font-weight: bold; line-height: 1.2;">TRADING</div>
+                                <div style="font-size: 8px; margin-top: 8px; opacity: 0.7;">Revealed</div>
+                            </div>
                         </div>
+                        
+                        <!-- Additional course info -->
+                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-top: 20px;">
+                            <div style="background: #2a2a3e; border-radius: 6px; padding: 15px; text-align: center;">
+                                <div style="color: #4a9eff; font-size: 11px; font-weight: bold; margin-bottom: 5px;">📚 MODULE 1-5</div>
+                                <div style="color: #ccc; font-size: 9px;">Foundation</div>
+                            </div>
+                            <div style="background: #2a2a3e; border-radius: 6px; padding: 15px; text-align: center;">
+                                <div style="color: #00ff88; font-size: 11px; font-weight: bold; margin-bottom: 5px;">🎯 PRACTICAL</div>
+                                <div style="color: #ccc; font-size: 9px;">Examples</div>
+                            </div>
+                        </div>
+                        
+                        <!-- Course completion badge -->
+                        <div style="position: absolute; top: 10px; right: 10px; background: #8a2be2; color: white; border-radius: 50%; width: 25px; height: 25px; display: flex; align-items: center; justify-content: center; font-size: 10px;">✓</div>
                     </div>
                 </div>
             </div>
