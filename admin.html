@@ -244,11 +244,41 @@
                 const data = await response.json();
                 console.log('Stats data received:', data);
                 
-                document.getElementById('totalViews').textContent = data.totalViews || 0;
-                document.getElementById('totalClicks').textContent = data.totalClicks || 0;
-                document.getElementById('totalLeads').textContent = data.totalLeads || 0;
-                document.getElementById('totalConversions').textContent = data.totalConversions || 0;
-                document.getElementById('conversionRate').textContent = (data.conversionRate || 0) + '%';
+                // Force update with detailed logging
+                const totalViewsEl = document.getElementById('totalViews');
+                const totalClicksEl = document.getElementById('totalClicks');
+                const totalLeadsEl = document.getElementById('totalLeads');
+                const totalConversionsEl = document.getElementById('totalConversions');
+                const conversionRateEl = document.getElementById('conversionRate');
+                
+                console.log('Elements found:', {
+                    totalViews: !!totalViewsEl,
+                    totalClicks: !!totalClicksEl,
+                    totalLeads: !!totalLeadsEl,
+                    totalConversions: !!totalConversionsEl,
+                    conversionRate: !!conversionRateEl
+                });
+                
+                if (totalViewsEl) {
+                    totalViewsEl.textContent = data.totalViews || 0;
+                    console.log('Updated totalViews to:', data.totalViews);
+                }
+                if (totalClicksEl) {
+                    totalClicksEl.textContent = data.totalClicks || 0;
+                    console.log('Updated totalClicks to:', data.totalClicks);
+                }
+                if (totalLeadsEl) {
+                    totalLeadsEl.textContent = data.totalLeads || 0;
+                    console.log('Updated totalLeads to:', data.totalLeads);
+                }
+                if (totalConversionsEl) {
+                    totalConversionsEl.textContent = data.totalConversions || 0;
+                    console.log('Updated totalConversions to:', data.totalConversions);
+                }
+                if (conversionRateEl) {
+                    conversionRateEl.textContent = (data.conversionRate || 0) + '%';
+                    console.log('Updated conversionRate to:', data.conversionRate + '%');
+                }
             } catch (error) {
                 console.error('Error loading stats:', error);
                 ['totalViews', 'totalClicks', 'totalLeads', 'totalConversions', 'conversionRate'].forEach(id => {
@@ -420,21 +450,50 @@
         }
 
         async function loadAllData() {
-            document.getElementById('lastUpdated').textContent = 'Refreshing data...';
+            console.log('Loading all data - DOM ready state:', document.readyState);
             
-            await Promise.all([
-                loadStats(),
-                loadPageViews(),
-                loadClicks(),
-                loadLeads(),
-                loadConversions()
-            ]);
+            const lastUpdatedEl = document.getElementById('lastUpdated');
+            if (lastUpdatedEl) {
+                lastUpdatedEl.textContent = 'Refreshing data...';
+            }
             
-            document.getElementById('lastUpdated').textContent = `Last updated: ${new Date().toLocaleString()}`;
+            try {
+                // Load stats first and wait for completion
+                await loadStats();
+                
+                // Then load other data
+                await Promise.all([
+                    loadPageViews(),
+                    loadClicks(),
+                    loadLeads(),
+                    loadConversions()
+                ]);
+                
+                if (lastUpdatedEl) {
+                    lastUpdatedEl.textContent = `Last updated: ${new Date().toLocaleString()}`;
+                }
+                
+                console.log('All data loaded successfully');
+            } catch (error) {
+                console.error('Error in loadAllData:', error);
+                if (lastUpdatedEl) {
+                    lastUpdatedEl.textContent = `Error loading data: ${error.message}`;
+                }
+            }
         }
 
-        // Load data on page load
-        document.addEventListener('DOMContentLoaded', loadAllData);
+        // Load data on page load with multiple fallbacks
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', loadAllData);
+        } else {
+            // DOM is already loaded
+            setTimeout(loadAllData, 100);
+        }
+        
+        // Also try on window load as fallback
+        window.addEventListener('load', () => {
+            setTimeout(loadAllData, 200);
+        });
 
         // Auto-refresh every 30 seconds
         setInterval(loadAllData, 30000);

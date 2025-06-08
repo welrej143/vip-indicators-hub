@@ -120,17 +120,24 @@ class Analytics {
 
   static async getStats() {
     try {
-      const [totalViews] = await db.select({ count: db.$count(schema.pageViews) }).from(schema.pageViews);
-      const [totalClicks] = await db.select({ count: db.$count(schema.clicks) }).from(schema.clicks);
-      const [totalLeads] = await db.select({ count: db.$count(schema.leads) }).from(schema.leads);
-      const [totalConversions] = await db.select({ count: db.$count(schema.conversions) }).from(schema.conversions);
+      const { count: sql } = require('drizzle-orm');
+      
+      const [totalViews] = await db.select({ count: sql(schema.pageViews.id) }).from(schema.pageViews);
+      const [totalClicks] = await db.select({ count: sql(schema.clicks.id) }).from(schema.clicks);
+      const [totalLeads] = await db.select({ count: sql(schema.leads.id) }).from(schema.leads);
+      const [totalConversions] = await db.select({ count: sql(schema.conversions.id) }).from(schema.conversions);
+
+      const viewsCount = Number(totalViews?.count || 0);
+      const clicksCount = Number(totalClicks?.count || 0);
+      const leadsCount = Number(totalLeads?.count || 0);
+      const conversionsCount = Number(totalConversions?.count || 0);
 
       return {
-        totalViews: totalViews?.count || 0,
-        totalClicks: totalClicks?.count || 0,
-        totalLeads: totalLeads?.count || 0,
-        totalConversions: totalConversions?.count || 0,
-        conversionRate: totalClicks?.count ? ((totalConversions?.count || 0) / totalClicks.count * 100).toFixed(2) : '0',
+        totalViews: viewsCount,
+        totalClicks: clicksCount,
+        totalLeads: leadsCount,
+        totalConversions: conversionsCount,
+        conversionRate: clicksCount > 0 ? (conversionsCount / clicksCount * 100).toFixed(2) : '0',
       };
     } catch (error) {
       console.error('Error getting stats:', error);
