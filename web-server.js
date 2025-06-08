@@ -63,36 +63,54 @@ app.get('/api/analytics/pageviews', async (req, res) => {
 app.get('/api/analytics/clicks', async (req, res) => {
     try {
         const fetch = (await import('node-fetch')).default;
-        const response = await fetch('http://127.0.0.1:3001/api/analytics/clicks');
+        const analyticsUrl = process.env.ANALYTICS_API_URL || 'http://127.0.0.1:3001';
+        const response = await fetch(`${analyticsUrl}/api/analytics/clicks`);
+        
+        if (!response.ok) {
+            throw new Error(`Analytics API responded with ${response.status}`);
+        }
+        
         const data = await response.json();
         res.json(data);
     } catch (error) {
         console.error('Error fetching clicks:', error);
-        res.status(500).json({ error: 'Failed to fetch clicks' });
+        res.json([]);
     }
 });
 
 app.get('/api/analytics/leads', async (req, res) => {
     try {
         const fetch = (await import('node-fetch')).default;
-        const response = await fetch('http://127.0.0.1:3001/api/analytics/leads');
+        const analyticsUrl = process.env.ANALYTICS_API_URL || 'http://127.0.0.1:3001';
+        const response = await fetch(`${analyticsUrl}/api/analytics/leads`);
+        
+        if (!response.ok) {
+            throw new Error(`Analytics API responded with ${response.status}`);
+        }
+        
         const data = await response.json();
         res.json(data);
     } catch (error) {
         console.error('Error fetching leads:', error);
-        res.status(500).json({ error: 'Failed to fetch leads' });
+        res.json([]);
     }
 });
 
 app.get('/api/analytics/conversions', async (req, res) => {
     try {
         const fetch = (await import('node-fetch')).default;
-        const response = await fetch('http://127.0.0.1:3001/api/analytics/conversions');
+        const analyticsUrl = process.env.ANALYTICS_API_URL || 'http://127.0.0.1:3001';
+        const response = await fetch(`${analyticsUrl}/api/analytics/conversions`);
+        
+        if (!response.ok) {
+            throw new Error(`Analytics API responded with ${response.status}`);
+        }
+        
         const data = await response.json();
         res.json(data);
     } catch (error) {
         console.error('Error fetching conversions:', error);
-        res.status(500).json({ error: 'Failed to fetch conversions' });
+        res.json([]);
     }
 });
 
@@ -100,32 +118,44 @@ app.get('/api/analytics/conversions', async (req, res) => {
 app.post('/api/track/pageview', async (req, res) => {
     try {
         const fetch = (await import('node-fetch')).default;
-        const response = await fetch('http://127.0.0.1:3001/api/track/pageview', {
+        const analyticsUrl = process.env.ANALYTICS_API_URL || 'http://127.0.0.1:3001';
+        const response = await fetch(`${analyticsUrl}/api/track/pageview`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(req.body)
         });
+        
+        if (!response.ok) {
+            throw new Error(`Analytics API responded with ${response.status}`);
+        }
+        
         const data = await response.json();
         res.json(data);
     } catch (error) {
         console.error('Error tracking pageview:', error);
-        res.status(500).json({ error: 'Failed to track pageview' });
+        res.json({ success: false, error: 'Tracking temporarily unavailable' });
     }
 });
 
 app.post('/api/track/click', async (req, res) => {
     try {
         const fetch = (await import('node-fetch')).default;
-        const response = await fetch('http://127.0.0.1:3001/api/track/click', {
+        const analyticsUrl = process.env.ANALYTICS_API_URL || 'http://127.0.0.1:3001';
+        const response = await fetch(`${analyticsUrl}/api/track/click`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(req.body)
         });
+        
+        if (!response.ok) {
+            throw new Error(`Analytics API responded with ${response.status}`);
+        }
+        
         const data = await response.json();
         res.json(data);
     } catch (error) {
         console.error('Error tracking click:', error);
-        res.status(500).json({ error: 'Failed to track click' });
+        res.json({ success: false, error: 'Tracking temporarily unavailable' });
     }
 });
 

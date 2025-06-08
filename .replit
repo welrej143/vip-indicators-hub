@@ -13,29 +13,16 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "Web Server"
-
-[[workflows.workflow.tasks]]
-task = "workflow.run"
-args = "Analytics API"
+args = "Server"
 
 [[workflows.workflow]]
-name = "Web Server"
+name = "Server"
 author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "node web-server.js"
+args = "node server.js"
 waitForPort = 5000
-
-[[workflows.workflow]]
-name = "Analytics API"
-author = "agent"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "cd server && npx ts-node app.ts"
-waitForPort = 3001
 
 [deployment]
 run = ["sh", "-c", "node web-server.js"]
