@@ -1,4 +1,4 @@
-import { db } from './db';
+import { db, pool } from './db';
 import { leads, clicks, pageViews, conversions } from '../shared/schema';
 import { desc } from 'drizzle-orm';
 
@@ -29,6 +29,7 @@ export class Analytics {
       });
     } catch (error) {
       console.error('Error tracking page view:', error);
+      throw error;
     }
   }
 
@@ -49,6 +50,7 @@ export class Analytics {
       });
     } catch (error) {
       console.error('Error tracking click:', error);
+      throw error;
     }
   }
 
@@ -68,6 +70,7 @@ export class Analytics {
       });
     } catch (error) {
       console.error('Error tracking lead:', error);
+      throw error;
     }
   }
 
@@ -86,6 +89,7 @@ export class Analytics {
       });
     } catch (error) {
       console.error('Error tracking conversion:', error);
+      throw error;
     }
   }
 
