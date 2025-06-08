@@ -28,6 +28,81 @@ const pool = new Pool({
 
 const db = drizzle({ client: pool, schema });
 
+// Initialize database tables
+async function initializeDatabase() {
+  try {
+    // Create tables if they don't exist
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS users (
+        id SERIAL PRIMARY KEY,
+        username VARCHAR(255) UNIQUE NOT NULL,
+        email VARCHAR(255),
+        created_at TIMESTAMP DEFAULT NOW()
+      );
+    `);
+
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS page_views (
+        id SERIAL PRIMARY KEY,
+        session_id VARCHAR(255),
+        page_url TEXT,
+        title VARCHAR(255),
+        time_on_page INTEGER DEFAULT 0,
+        scroll_depth INTEGER DEFAULT 0,
+        ip_address INET,
+        user_agent TEXT,
+        referrer TEXT,
+        created_at TIMESTAMP DEFAULT NOW()
+      );
+    `);
+
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS clicks (
+        id SERIAL PRIMARY KEY,
+        session_id VARCHAR(255),
+        element_id VARCHAR(255),
+        element_type VARCHAR(100),
+        page_url TEXT,
+        ip_address INET,
+        user_agent TEXT,
+        created_at TIMESTAMP DEFAULT NOW()
+      );
+    `);
+
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS leads (
+        id SERIAL PRIMARY KEY,
+        session_id VARCHAR(255),
+        email VARCHAR(255),
+        name VARCHAR(255),
+        phone VARCHAR(50),
+        source VARCHAR(255),
+        ip_address INET,
+        user_agent TEXT,
+        created_at TIMESTAMP DEFAULT NOW()
+      );
+    `);
+
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS conversions (
+        id SERIAL PRIMARY KEY,
+        session_id VARCHAR(255),
+        lead_id INTEGER,
+        conversion_type VARCHAR(100),
+        value DECIMAL(10,2),
+        currency VARCHAR(10) DEFAULT 'USD',
+        ip_address INET,
+        user_agent TEXT,
+        created_at TIMESTAMP DEFAULT NOW()
+      );
+    `);
+
+    console.log('Database tables initialized successfully');
+  } catch (error) {
+    console.error('Error initializing database:', error);
+  }
+}
+
 const app = express();
 const PORT = process.env.PORT || 5000;
 
@@ -371,8 +446,12 @@ process.on('SIGTERM', async () => {
     await pool.end();
 });
 
-app.listen(PORT, '0.0.0.0', () => {
+app.listen(PORT, '0.0.0.0', async () => {
     console.log(`Server running on http://0.0.0.0:${PORT}`);
+    
+    // Initialize database tables
+    await initializeDatabase();
+    console.log('Database initialized');
 });
 
 module.exports = app;
