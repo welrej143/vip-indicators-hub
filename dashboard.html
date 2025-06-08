@@ -150,7 +150,21 @@
         <button class="refresh-btn" onclick="loadData()">🔄 Refresh Data</button>
 
         <div class="metrics" id="metrics">
-            <!-- Metrics will be loaded here -->
+            <div class="metric-card">
+                <h3>Total Page Views</h3>
+                <div class="metric-value" id="pageViews">--</div>
+                <div class="metric-label">Unique Visitors</div>
+            </div>
+            <div class="metric-card">
+                <h3>Affiliate Clicks</h3>
+                <div class="metric-value" id="clicks">--</div>
+                <div class="metric-label">ClickBank Links</div>
+            </div>
+            <div class="metric-card">
+                <h3>Conversion Rate</h3>
+                <div class="metric-value" id="conversionRate">--%</div>
+                <div class="metric-label">Click to Convert</div>
+            </div>
         </div>
 
         <div class="countries-section">
@@ -180,26 +194,10 @@
                 console.log('Stats:', stats);
                 console.log('Page views count:', pageViews.length);
                 
-                // Update metrics display
-                const metricsHtml = `
-                    <div class="metric-card">
-                        <h3>Total Page Views</h3>
-                        <div class="metric-value" id="pageViews">${stats.totalViews || 0}</div>
-                        <div class="metric-label">Unique Visitors</div>
-                    </div>
-                    <div class="metric-card">
-                        <h3>Affiliate Clicks</h3>
-                        <div class="metric-value" id="clicks">${stats.totalClicks || 0}</div>
-                        <div class="metric-label">ClickBank Links</div>
-                    </div>
-                    <div class="metric-card">
-                        <h3>Conversion Rate</h3>
-                        <div class="metric-value" id="conversionRate">${stats.conversionRate || 0}%</div>
-                        <div class="metric-label">Click to Convert</div>
-                    </div>
-                `;
-                
-                document.getElementById('metrics').innerHTML = metricsHtml;
+                // Update metrics display directly
+                document.getElementById('pageViews').textContent = stats.totalViews || 0;
+                document.getElementById('clicks').textContent = stats.totalClicks || 0;
+                document.getElementById('conversionRate').textContent = (stats.conversionRate || 0) + '%';
                 
                 // Process countries from IP addresses
                 const countries = {};

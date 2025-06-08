@@ -46,17 +46,17 @@ app.use((req, res, next) => {
 app.use(express.json());
 app.use(express.static('.'));
 
-// Redirect admin URLs to the new dashboard
+// Force serve the new dashboard for all admin URLs
 app.get('/admin.html', (req, res) => {
-    res.redirect('/dashboard.html');
+    res.sendFile(path.join(__dirname, 'dashboard.html'));
 });
 
 app.get('/admin', (req, res) => {
-    res.redirect('/dashboard.html');
+    res.sendFile(path.join(__dirname, 'dashboard.html'));
 });
 
 app.get('/admin-dashboard.html', (req, res) => {
-    res.redirect('/dashboard.html');
+    res.sendFile(path.join(__dirname, 'dashboard.html'));
 });
 
 // Analytics Class
