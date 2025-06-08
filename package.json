@@ -19,6 +19,7 @@
     "drizzle-kit": "^0.31.1",
     "drizzle-orm": "^0.44.2",
     "express": "^5.1.0",
+    "http-proxy-middleware": "^3.0.5",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3",
     "ws": "^8.18.2"

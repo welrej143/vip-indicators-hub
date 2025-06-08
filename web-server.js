@@ -1,9 +1,17 @@
 const express = require('express');
 const path = require('path');
 const fs = require('fs');
+const { createProxyMiddleware } = require('http-proxy-middleware');
 
 const app = express();
 const PORT = 5000;
+
+// Proxy API calls to the Analytics API server
+app.use('/api', createProxyMiddleware({
+    target: 'http://localhost:3001',
+    changeOrigin: true,
+    logLevel: 'debug'
+}));
 
 // Serve static files from the root directory
 app.use(express.static('.'));
