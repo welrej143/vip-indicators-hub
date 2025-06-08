@@ -1,5 +1,6 @@
 import { db } from './db';
 import { leads, clicks, pageViews, conversions } from '../shared/schema';
+import { desc } from 'drizzle-orm';
 
 export interface TrackingData {
   sessionId?: string;
@@ -111,6 +112,42 @@ export class Analytics {
         totalConversions: 0,
         conversionRate: '0',
       };
+    }
+  }
+
+  static async getPageViews() {
+    try {
+      return await db.select().from(pageViews).orderBy(desc(pageViews.createdAt)).limit(50);
+    } catch (error) {
+      console.error('Error getting page views:', error);
+      return [];
+    }
+  }
+
+  static async getClicks() {
+    try {
+      return await db.select().from(clicks).orderBy(desc(clicks.createdAt)).limit(50);
+    } catch (error) {
+      console.error('Error getting clicks:', error);
+      return [];
+    }
+  }
+
+  static async getLeads() {
+    try {
+      return await db.select().from(leads).orderBy(desc(leads.createdAt)).limit(50);
+    } catch (error) {
+      console.error('Error getting leads:', error);
+      return [];
+    }
+  }
+
+  static async getConversions() {
+    try {
+      return await db.select().from(conversions).orderBy(desc(conversions.createdAt)).limit(50);
+    } catch (error) {
+      console.error('Error getting conversions:', error);
+      return [];
     }
   }
 }

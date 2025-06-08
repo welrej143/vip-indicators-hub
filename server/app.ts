@@ -115,6 +115,50 @@ app.get('/api/analytics/stats', async (req, res) => {
   }
 });
 
+// Get page views data
+app.get('/api/analytics/pageviews', async (req, res) => {
+  try {
+    const data = await Analytics.getPageViews();
+    res.json(data);
+  } catch (error) {
+    console.error('Error getting page views:', error);
+    res.status(500).json({ error: 'Failed to get page views' });
+  }
+});
+
+// Get clicks data
+app.get('/api/analytics/clicks', async (req, res) => {
+  try {
+    const data = await Analytics.getClicks();
+    res.json(data);
+  } catch (error) {
+    console.error('Error getting clicks:', error);
+    res.status(500).json({ error: 'Failed to get clicks' });
+  }
+});
+
+// Get leads data
+app.get('/api/analytics/leads', async (req, res) => {
+  try {
+    const data = await Analytics.getLeads();
+    res.json(data);
+  } catch (error) {
+    console.error('Error getting leads:', error);
+    res.status(500).json({ error: 'Failed to get leads' });
+  }
+});
+
+// Get conversions data
+app.get('/api/analytics/conversions', async (req, res) => {
+  try {
+    const data = await Analytics.getConversions();
+    res.json(data);
+  } catch (error) {
+    console.error('Error getting conversions:', error);
+    res.status(500).json({ error: 'Failed to get conversions' });
+  }
+});
+
 app.listen(port, () => {
   console.log(`Analytics API server running on port ${port}`);
 });
