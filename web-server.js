@@ -20,7 +20,7 @@ app.use(express.json());
 app.get('/api/analytics/stats', async (req, res) => {
     try {
         const fetch = (await import('node-fetch')).default;
-        const response = await fetch('http://localhost:3001/api/analytics/stats');
+        const response = await fetch('http://127.0.0.1:3001/api/analytics/stats');
         const data = await response.json();
         res.json(data);
     } catch (error) {
@@ -32,7 +32,7 @@ app.get('/api/analytics/stats', async (req, res) => {
 app.get('/api/analytics/pageviews', async (req, res) => {
     try {
         const fetch = (await import('node-fetch')).default;
-        const response = await fetch('http://localhost:3001/api/analytics/pageviews');
+        const response = await fetch('http://127.0.0.1:3001/api/analytics/pageviews');
         const data = await response.json();
         res.json(data);
     } catch (error) {
@@ -44,7 +44,7 @@ app.get('/api/analytics/pageviews', async (req, res) => {
 app.get('/api/analytics/clicks', async (req, res) => {
     try {
         const fetch = (await import('node-fetch')).default;
-        const response = await fetch('http://localhost:3001/api/analytics/clicks');
+        const response = await fetch('http://127.0.0.1:3001/api/analytics/clicks');
         const data = await response.json();
         res.json(data);
     } catch (error) {
@@ -56,7 +56,7 @@ app.get('/api/analytics/clicks', async (req, res) => {
 app.get('/api/analytics/leads', async (req, res) => {
     try {
         const fetch = (await import('node-fetch')).default;
-        const response = await fetch('http://localhost:3001/api/analytics/leads');
+        const response = await fetch('http://127.0.0.1:3001/api/analytics/leads');
         const data = await response.json();
         res.json(data);
     } catch (error) {
@@ -68,7 +68,7 @@ app.get('/api/analytics/leads', async (req, res) => {
 app.get('/api/analytics/conversions', async (req, res) => {
     try {
         const fetch = (await import('node-fetch')).default;
-        const response = await fetch('http://localhost:3001/api/analytics/conversions');
+        const response = await fetch('http://127.0.0.1:3001/api/analytics/conversions');
         const data = await response.json();
         res.json(data);
     } catch (error) {
