@@ -836,7 +836,7 @@
 
         // Track page view
         function trackPageView() {
-            fetch(`${window.location.protocol}//${window.location.hostname}:3001/api/track/pageview`, {
+            fetch(`${window.location.protocol}//${window.location.host}/api/track/pageview`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -849,7 +849,7 @@
 
         // Track button clicks
         function trackClick(buttonText, buttonLocation, destinationUrl) {
-            fetch(`${window.location.protocol}//${window.location.hostname}:3001/api/track/click`, {
+            fetch(`${window.location.protocol}//${window.location.host}/api/track/click`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -863,7 +863,7 @@
 
         // Track conversion when user clicks ClickBank link
         function trackConversion(source) {
-            fetch(`${window.location.protocol}//${window.location.hostname}:3001/api/track/conversion`, {
+            fetch(`${window.location.protocol}//${window.location.host}/api/track/conversion`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -890,7 +890,7 @@
         // Track time on page before leaving
         function trackTimeOnPage() {
             const timeOnPage = Math.round((Date.now() - pageStartTime) / 1000);
-            fetch(`${window.location.protocol}//${window.location.hostname}:3001/api/track/pageview`, {
+            fetch(`${window.location.protocol}//${window.location.host}/api/track/pageview`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
