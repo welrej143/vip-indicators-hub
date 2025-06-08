@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: vip-indicators-landing
+    env: node
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: vip-indicators-db
+          property: connectionString
+databases:
+  - name: vip-indicators-db
+    databaseName: vip_indicators
+    user: vip_user
